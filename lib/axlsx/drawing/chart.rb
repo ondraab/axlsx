@@ -23,6 +23,7 @@ module Axlsx
       @display_blanks_as = :gap
       @series_type = Series
       @title = Title.new
+      @bg_color = nil
       parse_options options
       start_at(*options[:start_at]) if options[:start_at]
       end_at(*options[:end_at]) if options[:end_at]
@@ -40,6 +41,10 @@ module Axlsx
     # A collection of series objects that are applied to the chart
     # @return [SimpleTypedList]
     attr_reader :series
+
+    # Chart background color
+    # @return [String]
+    attr_reader :bg_color
 
     # The type of series to use for this chart.
     # @return [Series]
@@ -176,6 +181,16 @@ module Axlsx
       str << ('<c:dispBlanksAs val="' << display_blanks_as.to_s << '"/>')
       str << '<c:showDLblsOverMax val="1"/>'
       str << '</c:chart>'
+      if @bg_color
+        str << '<c:spPr>'
+        str << '<a:solidFill>'
+        str << '<a:srgbClr val="' << @bg_color << '"/>'
+        str << '</a:solidFill>'
+        str << '<a:ln>'
+        str << '<a:noFill/>'
+        str << '</a:ln>'
+        str << '</c:spPr>'
+      end
       str << '<c:printSettings>'
       str << '<c:headerFooter/>'
       str << '<c:pageMargins b="1.0" l="0.75" r="0.75" t="1.0" header="0.5" footer="0.5"/>'
@@ -210,6 +225,10 @@ module Axlsx
     # @return [Marker]
     def start_at(x=0, y=0)
       @graphic_frame.anchor.start_at(x, y)
+    end
+
+    def bg_color=(color_rgb)
+      @bg_color = color_rgb
     end
 
     # This is a short cut method to set the end anchor position
