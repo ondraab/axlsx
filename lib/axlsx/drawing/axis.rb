@@ -18,6 +18,7 @@ module Axlsx
       @delete = @label_rotation = 0
       @scaling = Scaling.new(:orientation=>:minMax)
       @title = @color = nil
+      @tick_color = 'cccccc'
       self.ax_pos = :b
       self.tick_lbl_pos = :nextTo
       self.format_code = "General"
@@ -30,6 +31,11 @@ module Axlsx
     # e.g. FF0000 for red
     # @return [String]
     attr_reader :color
+
+    # the fill color to use in the axis ticks. This should be a 6 character long hex string
+    # e.g. FF0000 for red
+    # @return [String]
+    attr_reader :tick_color
 
     # the id of the axis.
     # @return [Integer]
@@ -89,6 +95,14 @@ module Axlsx
     # @see color
     def color=(color_rgb)
       @color = color_rgb
+    end
+
+    # The color for ticks
+    # colors should be in 6 character rbg format
+    # @return [String] the rbg color assinged.
+    # @see color
+    def tick_color=(color_rgb)
+      @tick_color = color_rgb
     end
     
     # The crossing axis for this axis
@@ -160,6 +174,14 @@ module Axlsx
         str << '<c:spPr>'
         str << '<a:ln>'
         str << '<a:noFill/>'
+        str << '</a:ln>'
+        str << '</c:spPr>'
+      else
+        str << '<c:spPr>'
+        str << '<a:ln>'
+        str << '<a:solidFill>'
+        str << ('<a:srgbClr val="' << @tick_color << '"/>')
+        str << '</a:solidFill>'
         str << '</a:ln>'
         str << '</c:spPr>'
       end
