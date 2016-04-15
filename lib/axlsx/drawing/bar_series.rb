@@ -51,21 +51,45 @@ module Axlsx
     # Serializes the object
     # @param [String] str
     # @return [String]
+    # def to_xml_string(str = '')
+    #   super(str) do
+
+    #     colors.each_with_index do |c, index|
+    #       str << '<c:dPt>'
+    #       str << ('<c:idx val="' << index.to_s << '"/>')
+    #       str << '<c:spPr><a:solidFill>'
+    #       str << ('<a:srgbClr val="' << c << '"/>')
+    #       str << '</a:solidFill></c:spPr></c:dPt>'
+    #     end
+
+    #     @labels.to_xml_string(str) unless @labels.nil?
+    #     @data.to_xml_string(str) unless @data.nil?
+    #     # this is actually only required for shapes other than box 
+    #     str << ('<c:shape val="' << shape.to_s << '"></c:shape>')
+    #   end
+    # end
+
     def to_xml_string(str = '')
       super(str) do
 
-        colors.each_with_index do |c, index|
-          str << '<c:dPt>'
-          str << ('<c:idx val="' << index.to_s << '"/>')
+        if colors.length == 1
           str << '<c:spPr><a:solidFill>'
-          str << ('<a:srgbClr val="' << c << '"/>')
-          str << '</a:solidFill></c:spPr></c:dPt>'
+          str << '<a:srgbClr val="' << colors[0] << '"/>'
+          str << '</a:solidFill></c:spPr>'
+        else
+          colors.each_with_index do |c, index|
+            str << '<c:dPt>'
+            str << '<c:idx val="' << index.to_s << '"/>'
+            str << '<c:spPr><a:solidFill>'
+            str << '<a:srgbClr val="' << c << '"/>'
+            str<< '</a:solidFill></c:spPr></c:dPt>'
+          end
         end
 
         @labels.to_xml_string(str) unless @labels.nil?
         @data.to_xml_string(str) unless @data.nil?
-        # this is actually only required for shapes other than box 
-        str << ('<c:shape val="' << shape.to_s << '"></c:shape>')
+        # this is actually only required for shapes other than box
+        str << '<c:shape val="' << shape.to_s << '"></c:shape>'
       end
     end
 
